@@ -1,16 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-struct book {
+struct book_pamams {
     char book_name[50];
     int edition_year;
     int amount_of_pages;
     int cost;
 };
-typedef struct book book_pamams;
+typedef struct book_pamams book_pamams;
 
 void read_book_pamams (book_pamams *bk, int i) {
-
     printf("Введите название %dй книги: ", i);
     scanf("%s", bk -> book_name);
     printf("Введите год издания ");
@@ -25,7 +25,7 @@ void read_book_pamams (book_pamams *bk, int i) {
 static int compare(const void *p1, const void *p2) {
     book_pamams *bk1 = *(book_pamams**)p1;
     book_pamams *bk2 = *(book_pamams**)p2;
-    return bk2->book_name - bk1->book_name;
+    return strcmp(bk1->book_name, bk2->book_name);
 }
 
 int main(int argc, char **argv) {
@@ -50,12 +50,9 @@ int main(int argc, char **argv) {
         printf("Стоимость : %d\n\n", bk[i]->cost);
     }
 
-
     for (int i = 0; i < count; i++)
     {
         free(bk[i]);
     }
     free(bk);
-
-    return 0;
 }
