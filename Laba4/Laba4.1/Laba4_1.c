@@ -1,3 +1,11 @@
+//Написать программу, обрабатывающую текстовый файл и записывающую обработанные
+// данные в файл с таким же именем, но с другим типом
+
+//Исключить строки, начинающиеся с заданного слова 
+//Параметры командной строки:
+//1. Имя входного файла 
+//2. Заданное слово
+	
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -40,14 +48,15 @@ char** reading_file(FILE *myfile, int length, int size) {
     return arr;
 }
 
-int lines_counting() {
-    FILE *myfile = fopen("source.txt", "r");
+int lines_counting(args arguments) {
+    FILE *myfile = fopen(arguments.file, "r");
     size_t lines_count = 0;
     while (! feof(myfile))
     {
         if (fgetc(myfile) == '\n')
             lines_count++;
     }
+
     fclose(myfile);
     return lines_count;
 }
@@ -97,7 +106,7 @@ int main (int argc, char** argv) {
     char* word_ro_find = arguments.word;
     char** readed_arr = reading_file(myfile,LINE_LENGTH, NUMBER_OF_STRINGS);
     char** string_begin = reading_strings_begin(myfile, readed_arr, word_length, NUMBER_OF_STRINGS);
-    int lines_count = lines_counting();
+    int lines_count = lines_counting(arguments);
     print_readed_arr(readed_arr, NUMBER_OF_STRINGS, word_ro_find, string_begin, lines_count );
     free_arr(readed_arr, NUMBER_OF_STRINGS);
     free_arr(string_begin, NUMBER_OF_STRINGS);
