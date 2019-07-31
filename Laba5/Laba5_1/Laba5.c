@@ -6,11 +6,9 @@ extern float root(float a);
 
 int main () {
     float a;
-    //char b[1024];
 
     printf ("Введите число: ");
     scanf ("%f", &a);
-    //a = atoi(b);
 
     float rezult1 = square(a);
     float rezult2 = root(a);
