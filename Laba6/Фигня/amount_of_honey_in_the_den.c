@@ -1,55 +1,58 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <errno.h>
+#include <fcntl.h>
 
-void reverse(char s[])
- {
-     int i, j;
-     char c;
- 
-     for (i = 0, j = strlen(s)-1; i<j; i++, j--) {
-         c = s[i];
-         s[i] = s[j];
-         s[j] = c;
-     }
- }
-
-void itoa(int n, char s[]) {
-    int i, sign;
-
-    if ((sign = n) < 0)  /* записываем знак */
-        n = -n;          /* делаем n положительным числом */
-    i = 0;
-    do {       /* генерируем цифры в обратном порядке */
-        s[i++] = n % 10 + '0';   /* берем следующую цифру */
-    } while ((n /= 10) > 0);     /* удаляем */
-    if (sign < 0)
-        s[i++] = '-';
-    s[i] = '\0';
-    reverse(s);
+int count(int n) {
+    int count=0;
+    while (n) {
+        n/=10;
+        count++; }
+    return count;
 }
 
-int reading_file() {
-    FILE *myfile = fopen("/home/ilya/Чистяков/Лабы/Laba6/amount_of_honey_in_the_den.txt", "r");
-    int amount_of_honey_in_the_den;
-    fread(&amount_of_honey_in_the_den, sizeof(int), 1, myfile);
-    fclose(myfile);
-    return amount_of_honey_in_the_den;
+int* reading_file() {
+    char* file_name = "/home/ilya/Чистяков/Лабы/Laba6/amount_of_honey_in_the_den.txt";
+    int myfile = open (file_name, O_RDONLY);
+    lockf(myfile, F_LOCK, 0L);
+    
+    int* buffer = malloc(sizeof(int)*10);
+    
+    read(myfile, buffer, sizeof(int));
+    
+    lockf(myfile, F_ULOCK, 0L);
+    close(myfile);
+    return buffer;
 }
 
 void writing_to_file(int amount_of_honey_in_the_den) {
-    FILE *myfile = fopen("/home/ilya/Чистяков/Лабы/Laba6/amount_of_honey_in_the_den.txt", "w");
-    char* buf = NULL;
-    int aaa = amount_of_honey_in_the_den;
-    itoa(aaa, buf);
-    fwrite(&amount_of_honey_in_the_den, strlen(buf), 1, myfile);
-    fclose(myfile);
+    char* file_name = "/home/ilya/Чистяков/Лабы/Laba6/amount_of_honey_in_the_den.txt";
+    int myfile = open (file_name, O_WRONLY);
+    lockf(myfile, F_LOCK, 0L);
+    printf("DEN %d\n", amount_of_honey_in_the_den);
+    
+    int length = count(amount_of_honey_in_the_den);
+    printf("COUNT %d\n", length);
+    
+    write(myfile, (char*)(&amount_of_honey_in_the_den), 2);
+        printf("Writen\n");
+        //exit(0);
+    lockf(myfile, F_ULOCK, 0L);
+    close(myfile);
 }
 
 int main () {
-    int amount_of_honey_in_the_den = 20;
-    int writing_symbols_amount = (sizeof(amount_of_honey_in_the_den));
-    printf("%d", writing_symbols_amount);
+    int amount_of_honey_in_the_den;
+    scanf("%i", &amount_of_honey_in_the_den);
+    //printf("COUNT %d\n", count(amount_of_honey_in_the_den));
+    writing_to_file(amount_of_honey_in_the_den);
+    int a = *reading_file();
+    printf("XXX   %d", a);
     return 0;
 
 }
